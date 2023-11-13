@@ -1,11 +1,11 @@
-import express from "express";
-import cors from "cors";
-import { router } from '../router/router.js'
+import express from 'express';
+import cors from 'cors';
+import { router } from '../router/router.js';
 import { SERVICE_LOCAL_PORT, NODE_ENV } from '../../constant/config.js';
 
-export const server = new express();
+const server = new express();
 
-export const init = async () => {
+const init = async () => {
 
     server.use(express.urlencoded({ extended: true }));
     server.use(express.json());
@@ -14,4 +14,4 @@ export const init = async () => {
 
 }
 
-export { SERVICE_LOCAL_PORT, NODE_ENV }
+export { init, server, SERVICE_LOCAL_PORT, NODE_ENV }
