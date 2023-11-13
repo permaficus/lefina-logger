@@ -19,7 +19,7 @@ const colors = {
 
 winston.addColors(colors)
 
-const { combine, timestamp, printf, colorize, align, json } = winston.format;
+const { combine, timestamp, printf, colorize, json } = winston.format;
 
 const logTransport = [
     new winston.transports.Console(),
