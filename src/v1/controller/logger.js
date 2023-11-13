@@ -7,7 +7,9 @@ export class log {
         const { level, message } = req.body;
 
         const Do = {
-            ...(level.error && { logging: logger.error(message) })
+            ...(level.error && { logging: logger.error(message) }),
+            ...(level.info && { logging: logger.info(message) }),
+            ...(level.warn && { logging: logger.warn(message) })
         }
 
         Do.logging
