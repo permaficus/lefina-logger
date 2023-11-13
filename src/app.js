@@ -3,8 +3,8 @@ import {
     server, 
     SERVICE_LOCAL_PORT,
     NODE_ENV
-} from './v1/libs/server.utils.js'
-import chalk from "chalk";
+} from './v1/libs/server.utils.js';
+import chalk from 'chalk';
 
 (async () => {
 

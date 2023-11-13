@@ -1,0 +1,17 @@
+undefined
+undefined
+undefined
+[31m{"level":"error","message":"connect ECONNREFUSED ::1:3001"}[39m
+[31m{"level":"error","message":"connect ECONNREFUSED ::1:3001"}[39m
+[31m{"level":"error","message":"connect ECONNREFUSED ::1:3001"}[39m
+[31m{"level":"error","message":"connect ECONNREFUSED ::1:3001Sunday, November 12, 2023"}[39m
+[31m{"level":"error","message":"connect ECONNREFUSED ::1:3001 timestamp: Sun Nov 12 2023 23:19:16 GMT+0700 (Western Indonesia Time)"}[39m
+[31m{"level":"error","message":{"details":{"code":"ECONNREFUSED","config":{"adapter":"http","baseURL":"http://localhost:3001","env":{},"headers":{"Accept":"application/json, text/plain, */*","Accept-Encoding":"gzip, compress, deflate, br","User-Agent":"axios/1.5.0","authentication-token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyIwIjoiOTUzNzliNDIiLCIxIjoiY2Y5YiIsIjIiOiI0MTUxIiwiMyI6ImIwMmQiLCI0IjoiODdjYzg1Y2E0OTYzIiwiaXNzIjoibGVmaW5hIiwiX3R5cGUiOiJhdXRoX3Rva2VuIiwiaWF0IjoxNjk5ODAzNDM5LCJleHAiOjE2OTk4ODk4Mzl9.1kw81gopV19HxOsdR28jnSaq2s2mwkGrddZlxeRLPZM","refresh-token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJsZWZpbmEiLCJfdHlwZSI6InJlZnJlc2hfdG9rZW4iLCJqdGkiOiI5NTM3OWI0Mi1jZjliLTQxNTEtYjAyZC04N2NjODVjYTQ5NjMiLCJpYXQiOjE2OTk3NjkxNjUsImV4cCI6MTcwMjM2MTE2NX0.35nVAl7-djmN5DfxV2S2KBYHPmDF-KnK0w9BJvihF2c"},"maxBodyLength":-1,"maxContentLength":-1,"method":"get","timeout":5000,"transformRequest":[null],"transformResponse":[null],"transitional":{"clarifyTimeoutError":false,"forcedJSONParsing":true,"silentJSONParsing":true},"url":"/business/admin@citraweb.id","xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN"},"message":"connect ECONNREFUSED ::1:3001","name":"Error","stack":"Error: connect ECONNREFUSED ::1:3001\n    at AxiosError.from (file:///Users/permaficus/Documents/Projects/lefina-backend/api-gateway/node_modules/axios/lib/core/AxiosError.js:89:14)\n    at RedirectableRequest.handleRequestError (file:///Users/permaficus/Documents/Projects/lefina-backend/api-gateway/node_modules/axios/lib/adapters/http.js:593:25)\n    at RedirectableRequest.emit (node:events:526:35)\n    at eventHandlers.<computed> (/Users/permaficus/Documents/Projects/lefina-backend/api-gateway/node_modules/follow-redirects/index.js:14:24)\n    at ClientRequest.emit (node:events:514:28)\n    at Socket.socketErrorListener (node:_http_client:501:9)\n    at Socket.emit (node:events:514:28)\n    at emitErrorNT (node:internal/streams/destroy:151:8)\n    at emitErrorCloseNT (node:internal/streams/destroy:116:3)\n    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)","status":null},"timestamp":"2023-11-12T16:20:12.544Z"}}[39m
+[31m{"level":"error","message":{"details":"connect ECONNREFUSED ::1:3001","timestamp":"2023-11-12T16:20:37.217Z"}}[39m
+[31m{"level":"error","message":"connect ECONNREFUSED ::1:3001"}[39m
+[31m{"level":"error","message":"Request failed with status code 503"}[39m
+undefined
+[2023-12-11 23:36:30] [31merror[39m : 	[31mRequest failed with status code 503[39m
+[2023-12-11 23:37:02][31merror[39m:	[31mRequest failed with status code 503[39m
+[2023-12-11 23:38:31] [31merror[39m : 	[31mRequest failed with status code 503[39m
+[2023-12-11 23:38:58] [31merror[39m : [31mRequest failed with status code 503[39m
