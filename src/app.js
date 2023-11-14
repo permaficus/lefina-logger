@@ -4,6 +4,7 @@ import {
     SERVICE_LOCAL_PORT,
     NODE_ENV
 } from './v1/libs/server.utils.js';
+import { retrieveMessageFromBroker as consumer } from './v1/libs/amqp.utils.js';
 import chalk from 'chalk';
 
 (async () => {
@@ -25,5 +26,7 @@ import chalk from 'chalk';
           );
     
     })
+
+    await consumer();
 
 })()
