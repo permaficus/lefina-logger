@@ -27,7 +27,7 @@ export class logModel {
             
             const report = await DB.logs.findMany({
                 where: {
-                    level: level
+                    level: {contains: level, mode: 'insensitive'}
                 },
                 orderBy: {
                     createAt: 'desc'

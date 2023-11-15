@@ -17,7 +17,7 @@ export const retrieveMessageFromBroker = async () => {
     await channel.consume(RBMQ_QUEUE_NAME, msg => {
         if (msg) {
 
-            const { level, source, code, details, environment  } = JSON.parse(msg.content);
+            const { level, details  } = JSON.parse(msg.content);
 
             if (LOGGER_STORAGE_TYPE == 'file') {
 
@@ -46,6 +46,11 @@ export const retrieveMessageFromBroker = async () => {
             channel.ack(msg)
 
         }
+    })
+
+    process.once('SIGINT', async() => {
+        await channel.close();
+        await rbmq.close();
     })
 
     console.log(" [*] Waiting for messages. To exit press CTRL+C\n");
