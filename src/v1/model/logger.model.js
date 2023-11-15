@@ -18,7 +18,7 @@ export class logModel {
             }
         })
 
-        logger.info(`Creating log: ${level} : ${source} : ${code}`)
+        logger.info(`Creating log: ${JSON.stringify(logging)}`)
     }
 
     static read = async (level) => {

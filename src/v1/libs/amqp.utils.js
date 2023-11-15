@@ -30,14 +30,14 @@ export const retrieveMessageFromBroker = async () => {
                 Do.logging
 
             } else {
-
+    
                 try {
-                    
+
                     log.create(JSON.parse(msg.content))
 
                 } catch (error) {
                     
-                    return;
+                    console.warn(error)
 
                 }
 
