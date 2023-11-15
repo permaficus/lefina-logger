@@ -9,10 +9,18 @@ import amqplib from 'amqplib';
 
 
 export const retrieveMessageFromBroker = async () => {
-
-    const rbmq = await amqplib.connect(RBMQ_URL);
-    const channel = await rbmq.createChannel();
     
+    let rbmq, channel = null;
+
+    try {      
+        rbmq = await amqplib.connect(RBMQ_URL)
+        channel = await rbmq.createChannel()
+    } catch (error) {
+        console.warn(`Retrying connect to ${RBMQ_URL.split('//')[1]}`)
+        setTimeout(retrieveMessageFromBroker, 5000)
+        return;
+    }
+
     await channel.assertQueue(RBMQ_QUEUE_NAME)
     await channel.consume(RBMQ_QUEUE_NAME, msg => {
         if (msg) {
