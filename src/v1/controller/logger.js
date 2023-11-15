@@ -16,7 +16,7 @@ export class log {
         }
     }
 
-    static read = async (req, res, next) => {
+    static read = async (req, res) => {
 
         try {
 
