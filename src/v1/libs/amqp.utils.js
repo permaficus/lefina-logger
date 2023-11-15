@@ -7,6 +7,7 @@ import { logger } from './logger.utils.js';
 import { log } from '../controller/logger.js';
 import amqplib from 'amqplib';
 
+let attemptCount = 0;
 
 export const retrieveMessageFromBroker = async () => {
     
@@ -16,7 +17,16 @@ export const retrieveMessageFromBroker = async () => {
         rbmq = await amqplib.connect(RBMQ_URL)
         channel = await rbmq.createChannel()
     } catch (error) {
-        console.warn(`Retrying connect to ${RBMQ_URL.split('//')[1]}`)
+
+        attemptCount++;
+
+        console.info(`Retrying connect to ${RBMQ_URL.split('//')[1]}, attempt: ${attemptCount}`)
+
+        if (attemptCount >= 5) {
+            console.log(`${error} - ${error.code}`)
+            return;
+        }
+
         setTimeout(retrieveMessageFromBroker, 5000)
         return;
     }
@@ -61,6 +71,7 @@ export const retrieveMessageFromBroker = async () => {
         await rbmq.close();
     })
 
+    attemptCount = 0;
     console.log(" [*] Waiting for messages. To exit press CTRL+C\n");
 
 }
