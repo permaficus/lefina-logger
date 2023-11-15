@@ -1,20 +1,33 @@
 import { logger } from "../libs/logger.utils.js";
+import { logModel } from "../model/logger.model.js";
 
 export class log {
 
-    static create = async (req, res) => {
+    static create = async (data) => {
 
-        const { level, message } = req.body;
+        try {
+            
+            await logModel.create(data)
 
-        const Do = {
-            ...(level.error && { logging: logger.error(message) }),
-            ...(level.info && { logging: logger.info(message) }),
-            ...(level.warn && { logging: logger.warn(message) })
+        } catch (error) {
+            
+            logger.error(error)
+
+        }
+    }
+
+    static read = async (req, res, next) => {
+
+        try {
+
+            const report = await logModel.read(req.params.level);
+            res.status(200).json(report).end();
+            
+        } catch (error) {
+            
+            logger.error(error)
         }
 
-        Do.logging
-
-        res.status(201).end();
     }
 
 }

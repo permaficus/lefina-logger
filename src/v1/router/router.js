@@ -3,4 +3,4 @@ import { log } from '../controller/logger.js';
 
 export const router = new express.Router();
 
-router.post('/logging', log.create)
+router.get('/logs/:level', log.read)

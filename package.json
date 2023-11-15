@@ -10,9 +10,11 @@
   "author": "Abu Khalif",
   "license": "MIT",
   "devDependencies": {
-    "@types/express": "^4.17.21"
+    "@types/express": "^4.17.21",
+    "prisma": "^5.6.0"
   },
   "dependencies": {
+    "@prisma/client": "^5.6.0",
     "amqplib": "^0.10.3",
     "axios": "^1.6.1",
     "chalk": "^5.3.0",

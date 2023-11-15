@@ -7,3 +7,4 @@ export const RBMQ_EXCHANGE_NAME = process.env.RBMQ_EXCHANGE_NAME
 export const RBMQ_URL = process.env.RBMQ_URL
 export const RBMQ_ROUTING_KEY = process.env.RBMQ_ROUTING_KEY
 export const RBMQ_QUEUE_NAME = process.env.RBMQ_QUEUE_NAME
+export const LOGGER_STORAGE_TYPE = process.env.LOGGER_STORAGE_TYPE
