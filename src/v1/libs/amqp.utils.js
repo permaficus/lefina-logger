@@ -6,6 +6,7 @@ import {
 import { logger } from './logger.utils.js';
 import { log } from '../controller/logger.js';
 import amqplib from 'amqplib';
+import chalk from 'chalk'
 
 let attemptCount = 0;
 
@@ -20,10 +21,10 @@ export const retrieveMessageFromBroker = async () => {
 
         attemptCount++;
 
-        console.info(`Retrying connect to ${RBMQ_URL.split('//')[1]}, attempt: ${attemptCount}`)
+        console.info(`Retrying connect to: ${chalk.yellow(RBMQ_URL.split('@')[1])}, attempt: ${chalk.red(attemptCount)}`)
 
         if (attemptCount >= 5) {
-            console.log(`${error} - ${error.code}`)
+            console.log(chalk.red('\nCannot connect to RabbitMQ Service'))
             return;
         }
 
@@ -72,6 +73,6 @@ export const retrieveMessageFromBroker = async () => {
     })
 
     attemptCount = 0;
-    console.log(" [*] Waiting for messages. To exit press CTRL+C\n");
+    console.log(chalk.green("\n[*] Waiting for messages. To exit press CTRL+C\n"));
 
 }
