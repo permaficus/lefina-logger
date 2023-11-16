@@ -16,7 +16,7 @@ export const retrieveMessageFromBroker = async () => {
 
     try {      
         rbmq = await amqplib.connect(RBMQ_URL)
-        channel = await rbmq.createChannel()
+
     } catch (error) {
 
         attemptCount++;
@@ -24,14 +24,25 @@ export const retrieveMessageFromBroker = async () => {
         console.info(`Retrying connect to: ${chalk.yellow(RBMQ_URL.split('@')[1])}, attempt: ${chalk.red(attemptCount)}`)
 
         if (attemptCount >= 5) {
-            console.log(chalk.red('\nCannot connect to RabbitMQ Service'))
-            logger.error('Cannot connect to RabbitMQ Service')
+            console.error(chalk.red('\nConnection to RabbitMQ service failed'))
+            logger.error('Connection to RabbitMQ Service failed')
             return;
         }
 
         setTimeout(retrieveMessageFromBroker, 5000)
         return;
     }
+
+    rbmq.on('error', ()=> {
+        setTimeout(retrieveMessageFromBroker, 5000)
+    })
+
+    channel = await rbmq.createChannel()
+    channel.on('error', () => {
+        console.error('Channel has been close');
+        setTimeout(retrieveMessageFromBroker, 5000)
+        return;
+    })
 
     await channel.assertQueue(RBMQ_QUEUE_NAME)
     await channel.consume(RBMQ_QUEUE_NAME, msg => {
