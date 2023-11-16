@@ -25,6 +25,7 @@ export const retrieveMessageFromBroker = async () => {
 
         if (attemptCount >= 5) {
             console.log(chalk.red('\nCannot connect to RabbitMQ Service'))
+            logger.error('Cannot connect to RabbitMQ Service')
             return;
         }
 
