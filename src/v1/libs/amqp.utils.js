@@ -7,84 +7,118 @@ import { logger } from './logger.utils.js';
 import { log } from '../controller/logger.js';
 import amqplib from 'amqplib';
 import chalk from 'chalk'
+import EventEmitter from 'events'
 
 let attemptCount = 0;
 
-export const retrieveMessageFromBroker = async () => {
-    
-    let rbmq, channel = null;
-
-    try {      
-        rbmq = await amqplib.connect(RBMQ_URL)
-
-    } catch (error) {
-
-        attemptCount++;
-
-        console.info(`Retrying connect to: ${chalk.yellow(RBMQ_URL.split('@')[1])}, attempt: ${chalk.red(attemptCount)}`)
-
-        if (attemptCount >= 5) {
-            console.error(chalk.red('\nConnection to RabbitMQ service failed'))
-            logger.error('Connection to RabbitMQ Service failed')
-            return;
-        }
-
-        setTimeout(retrieveMessageFromBroker, 5000)
-        return;
+class RabbitConnector extends EventEmitter {
+    constructor(){
+        super()
+        this.connection = null
+        this.attempt = 0
+        this.onError = this.onError.bind(this)
+        this.onClosed = this.onClosed.bind(this)
     }
 
-    rbmq.on('error', ()=> {
-        setTimeout(retrieveMessageFromBroker, 5000)
+    connect = async () => {
+
+        try {
+            const conn = await amqplib.connect(RBMQ_URL)
+    
+            conn.on('error', this.onError)
+            conn.on('close', this.onClosed)
+    
+            this.emit('connected', conn)
+            this.connection = conn
+            this.attempt = 0
+        } catch (error) {
+            if (error.code == 'ECONNREFUSED') {
+                this.emit('ECONNREFUSED', error.message);
+                return;
+            }
+    
+            if ((/ACCESS_REFUSED/g).test(error.message) == true) {
+                this.emit('ACCREFUSED', error.message);
+                return;
+            }
+            
+            this.onError(error)
+        }
+    }
+
+    reconnect = () => {
+        this.attempt++
+        this.emit('reconnect', this.attempt)
+        setTimeout((async () => await this.connect()), 1000);
+    }
+
+    onError = (error) => {
+        this.connection = null,
+        this.emit('error', error)
+        if (error.message !== 'Connection closing') {
+            this.reconnect();
+        }
+    }
+
+    onClosed = () => {
+        this.connection = null
+        this.emit('close', this.connection)
+        this.reconnect();
+    }
+}
+
+export const retrieveMessageFromBroker = async () => {
+
+    const rbmq = new RabbitConnector();
+    rbmq.connect();
+
+    rbmq.on('connected', async conn => {
+
+        const channel = await conn.createChannel();
+        await channel.consume(RBMQ_QUEUE_NAME, msg => {
+            if (msg) {
+                const { level, details } = JSON.parse(msg.content);
+
+                if (LOGGER_STORAGE_TYPE == 'file') {
+                    const Do = {
+                        ...(level.error && { logging: logger.error(details) }),
+                        ...(level.info && { logging: logger.info(details) }),
+                        ...(level.warn && { logging: logger.warn(details) })
+                    }
+    
+                    Do.logging
+                } else {
+                    try {
+                        log.create(JSON.parse(msg.content))
+                    } catch (error) {
+                        logger.error(error)
+                        return;
+                    }
+                }
+
+                channel.ack(msg)
+            }
+            
+        })
+
+        process.once('SIGINT', async () => {
+            await channel.close();
+            await conn.close();
+        })
+
+        console.log(chalk.green("\n[*] Waiting for messages. To exit press CTRL+C\n"));
+
     })
 
-    channel = await rbmq.createChannel()
-    channel.on('error', () => {
-        console.error('Channel has been close');
-        setTimeout(retrieveMessageFromBroker, 5000)
+    rbmq.on('error', error => {
+        console.info(chalk.red(`[RBMQ] Error: ${error.message}`))
+    })
+    rbmq.on('reconnect', count => {
+        console.info(`[RBMQ] Retrying connect to: ${chalk.yellow(RBMQ_URL.split('@')[1])}, attempt: ${chalk.green(count)}`)
+    })
+    rbmq.on('ECONNREFUSED', () => {
+        logger.error(`[RBMQ] Connection to ${RBMQ_URL.split('@')[1]} refused`)
+        console.error(chalk.red(`[RBMQ] Connection to ${RBMQ_URL.split('@')[1]} refused`))
         return;
     })
-
-    await channel.assertQueue(RBMQ_QUEUE_NAME)
-    await channel.consume(RBMQ_QUEUE_NAME, msg => {
-        if (msg) {
-
-            const { level, details  } = JSON.parse(msg.content);
-
-            if (LOGGER_STORAGE_TYPE == 'file') {
-
-                const Do = {
-                    ...(level.error && { logging: logger.error(details) }),
-                    ...(level.info && { logging: logger.info(details) }),
-                    ...(level.warn && { logging: logger.warn(details) })
-                }
-
-                Do.logging
-
-            } else {
-    
-                try {
-
-                    log.create(JSON.parse(msg.content))
-
-                } catch (error) {
-                    
-                    console.warn(error)
-
-                }
-
-            }
-
-            channel.ack(msg)
-
-        }
-    })
-
-    process.once('SIGINT', async() => {
-        await channel.close();
-        await rbmq.close();
-    })
-
-    attemptCount = 0;
-    console.log(chalk.green("\n[*] Waiting for messages. To exit press CTRL+C\n"));
-
 }
