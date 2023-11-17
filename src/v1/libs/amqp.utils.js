@@ -9,8 +9,6 @@ import amqplib from 'amqplib';
 import chalk from 'chalk'
 import EventEmitter from 'events'
 
-let attemptCount = 0;
-
 class RabbitConnector extends EventEmitter {
     constructor(){
         super()
