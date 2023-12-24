@@ -16,7 +16,7 @@ import chalk from 'chalk';
         console.log(
             `-----------------------------------------
             \n${chalk.black.bgGreenBright(`🚀 Logger Service is up and running!\n`
-            )}\Mode: ${chalk.blueBright(
+            )}\nMode: ${chalk.blueBright(
               `${NODE_ENV}`
             )}\nURL: ${chalk.blueBright(
               `http://localhost:${SERVICE_LOCAL_PORT}`
