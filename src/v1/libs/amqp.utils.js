@@ -14,6 +14,7 @@ class RabbitConnector extends EventEmitter {
         super()
         this.connection = null
         this.attempt = 0
+        this.maxAttempt = 20
         this.onError = this.onError.bind(this)
         this.onClosed = this.onClosed.bind(this)
     }
@@ -32,7 +33,9 @@ class RabbitConnector extends EventEmitter {
         } catch (error) {
             if (error.code == 'ECONNREFUSED') {
                 this.emit('ECONNREFUSED', error.message);
-                return;
+                if (this.attempt >= this.maxAttempt) {
+                    return;
+                }
             }
     
             if ((/ACCESS_REFUSED/g).test(error.message) == true) {
@@ -47,7 +50,7 @@ class RabbitConnector extends EventEmitter {
     reconnect = () => {
         this.attempt++
         this.emit('reconnect', this.attempt)
-        setTimeout((async () => await this.connect()), 1000);
+        setTimeout((async () => await this.connect()), 5000);
     }
 
     onError = (error) => {
@@ -71,7 +74,7 @@ export const retrieveMessageFromBroker = async () => {
     rbmq.connect();
 
     rbmq.on('connected', async conn => {
-
+        console.log(chalk.yellow(`[RBMQ] Connected to ${chalk.greenBright(RBMQ_URL.split('@')[1])}`))
         const channel = await conn.createChannel();
         await channel.consume(RBMQ_QUEUE_NAME, msg => {
             if (msg) {
