@@ -4,9 +4,7 @@ import { logger } from "../libs/logger.utils.js";
 export class logModel {
 
     static create = async ( data ) => {
-
         const { level, source, code, environment, details } = data;
-
         const logging =  await DB.logs.create({
             data: {
                 ...(level.error && { level: 'ERROR' }),
@@ -17,14 +15,11 @@ export class logModel {
                 details: details
             }
         })
-
         logger.info(`Creating log: ${JSON.stringify(logging)}`)
     }
 
     static read = async (level) => {
-
         try {
-            
             const report = await DB.logs.findMany({
                 where: {
                     level: {contains: level, mode: 'insensitive'}
@@ -33,15 +28,9 @@ export class logModel {
                     createAt: 'desc'
                 }
             })
-    
             return report;
-
         } catch (error) {
-            
             throw error
-
         }
-
     }
-
 }

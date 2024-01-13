@@ -15,10 +15,13 @@ class RabbitConnector extends EventEmitter {
         this.connection = null
         this.attempt = 0
         this.maxAttempt = 20
+        this.userCloseConnection = false
         this.onError = this.onError.bind(this)
         this.onClosed = this.onClosed.bind(this)
     }
-
+    setClosingState = (value) => {
+        this.userCloseConnection = value
+    }
     connect = async () => {
 
         try {
@@ -64,15 +67,15 @@ class RabbitConnector extends EventEmitter {
     onClosed = () => {
         this.connection = null
         this.emit('close', this.connection)
-        this.reconnect();
+        if (!this.userCloseConnection) {
+            this.reconnect();
+        }
     }
 }
 
 export const retrieveMessageFromBroker = async () => {
-
     const rbmq = new RabbitConnector();
     rbmq.connect();
-
     rbmq.on('connected', async conn => {
         console.log(chalk.yellow(`[RBMQ] Connected to ${chalk.greenBright(RBMQ_URL.split('@')[1])}`))
         const channel = await conn.createChannel();
@@ -103,6 +106,7 @@ export const retrieveMessageFromBroker = async () => {
         })
 
         process.once('SIGINT', async () => {
+            rbmq.setClosingState(true)
             await channel.close();
             await conn.close();
         })
